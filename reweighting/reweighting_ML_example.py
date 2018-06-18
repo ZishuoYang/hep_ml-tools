@@ -18,7 +18,7 @@ def draw_distributions(original, target, new_original_weights):
         hist(target[column], range=xlim, **hist_settings)
         title(column)
         print('KS over %s = %s %s %s' % (
-            column, ks_2samp_weighted[column],
+            column, ks_2samp_weighted(column),
             new_original_weights, numpy.ones(len(target), dtype=float)
         ))
 
