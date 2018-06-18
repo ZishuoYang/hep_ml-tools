@@ -14,12 +14,16 @@ def draw_distributions(original, target, new_original_weights):
     for id, column in enumerate(columns, 1):
         xlim = numpy.percentile(numpy.hstack([target[column]]), [0.01, 99.99])
         subplot(2, 3, id)
-        hist(original[column], weights=new_original_weights, range=xlim, **hist_settings)
+        hist(original[column], weights=new_original_weights, range=xlim,
+             **hist_settings)
         hist(target[column], range=xlim, **hist_settings)
         title(column)
-        print('KS over %s = %s %s %s' % (
-            column, ks_2samp_weighted(column),
-            new_original_weights, numpy.ones(len(target), dtype=float)
+        print('KS over %s = %s' % (
+            column, ks_2samp_weighted(
+                original[column], target[column],
+                weights1=new_original_weights,
+                weights2=numpy.ones(len(target), dtype=float)
+            )
         ))
 
 
