@@ -7,17 +7,25 @@ import numpy
 from hep_ml import reweight
 from sklearn.cross_validation import train_test_split
 from hep_ml.metrics_utils import ks_2samp_weighted
-from matplotlib.pyplot import subplot, hist, title
+
+# Plotting
+from matplotlib import pyplot as plt
+# Plot style
+plt.style.use('ggplot')
 
 
-def draw_distributions(original, target, new_original_weights):
+def draw_distributions(original, target, new_original_weights, filename):
+    fig = plt.figure()
+
     for id, column in enumerate(columns, 1):
         xlim = numpy.percentile(numpy.hstack([target[column]]), [0.01, 99.99])
-        subplot(2, 3, id)
-        hist(original[column], weights=new_original_weights, range=xlim,
-             **hist_settings)
-        hist(target[column], range=xlim, **hist_settings)
-        title(column)
+
+        ax = plt.subplot(2, 3, id)
+        ax.hist(original[column], weights=new_original_weights, range=xlim,
+                **hist_settings),
+        ax.hist(target[column], range=xlim, **hist_settings)
+        ax.set_title(column)
+
         print('KS over %s = %s' % (
             column, ks_2samp_weighted(
                 original[column], target[column],
@@ -25,6 +33,8 @@ def draw_distributions(original, target, new_original_weights):
                 weights2=numpy.ones(len(target), dtype=float)
             )
         ))
+
+    fig.savefig(filename)
 
 
 # Import data
@@ -47,13 +57,15 @@ hist_settings = {'bins': 100, 'normed': True, 'alpha': 0.7}
 
 # Pay attention, actually we have very few data
 len(original), len(target)
-draw_distributions(original, target, original_weights)
+draw_distributions(original, target, original_weights, 'original_weights.png')
 
 # Train part of original distribution
-draw_distributions(original_train, target_train, original_weights_train)
+draw_distributions(original_train, target_train, original_weights_train,
+                   'original_weights_train.png')
 
 # Test part of target distribution
-draw_distributions(original_test, target_test, original_weights_test)
+draw_distributions(original_test, target_test, original_weights_test,
+                   'original_weights_test.png')
 
 # Gradient boosted Reweighter
 reweighter = reweight.GBReweighter(n_estimators=50, learning_rate=0.1,
@@ -63,4 +75,5 @@ reweighter.fit(original_train, target_train)
 gb_weights_test = reweighter.predict_weights(original_test)
 
 # Validate reweighting rule on the test part comparing 1d projections
-draw_distributions(original_test, target_test, gb_weights_test)
+draw_distributions(original_test, target_test, gb_weights_test,
+                   'gb_weights_test.png')
