@@ -6,3 +6,8 @@ https://github.com/arogozhnikov/hep_ml
 Example: https://github.com/arogozhnikov/hep_ml/blob/master/notebooks/DemoReweighting.ipynb
 
 "Reweighting with Boosted Decision Trees", by Alex Rogozhnikov. http://iopscience.iop.org/article/10.1088/1742-6596/762/1/012036/pdf
+
+## 2. sPlot
+Example: https://github.com/arogozhnikov/hep_ml/blob/master/notebooks/sPlot.ipynb
+
+
