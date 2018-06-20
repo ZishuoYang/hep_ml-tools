@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 
 import numpy
+import matplotlib
 
 from hep_ml.metrics_utils import ks_2samp_weighted
 from matplotlib import pyplot as plt
 
-# Plot style
-plt.style.use('ggplot')
+#######################
+# Statistics printout #
+#######################
 
 
 def print_statistics(names, original, target,
@@ -28,6 +30,19 @@ def print_statistics(names, original, target,
         print('========')
 
 
+########
+# Plot #
+########
+
+# Plot style
+plt.style.use('bmh')
+
+# Font family
+# available families: ['serif', 'sans-serif', 'cursive', 'fantasy', 'monospace']
+matplotlib.rcParams.update({'font.family': 'monospace'})
+# matplotlib.rcParams.update({'font.serif': ['Dejavu Sans']})
+
+
 def draw_distributions(filename, names, original, target,
                        original_weights=None, target_weights=None,
                        hist_settings={'bins': 20, 'density': True, 'alpha': 0.7}
@@ -38,20 +53,23 @@ def draw_distributions(filename, names, original, target,
     target_weights = numpy.ones(len(target)) if \
         target_weights is None else target_weights
 
-    # Main canvas
-    canvas = plt.figure()
+    # Main figure
+    figure = plt.figure()
 
     for idx, n in enumerate(names, 1):
         plot_range = numpy.percentile(numpy.hstack([target[n]]), [0.01, 99.99])
 
         # subplot(nrows, ncols, idx)
-        subfigure = plt.subplot(2, 3, idx)
+        subfigure = figure.add_subplot(2, 3, idx)
+        subfigure.set_title(n)
 
-        # Actually draw tow histograms to this subfigure
+        # Actually draw histograms to this subfigure
         subfigure.hist(original[n], weights=original_weights,
                        range=plot_range, **hist_settings)
         subfigure.hist(target[n], weights=target_weights,
                        range=plot_range, **hist_settings)
-        subfigure.set_title(n)
 
-    canvas.savefig(filename)
+    # Minimize overlapping
+    figure.tight_layout()
+
+    figure.savefig(filename, dpi=300)
