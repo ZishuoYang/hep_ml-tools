@@ -115,5 +115,10 @@ reweighter = reweight.FoldingReweighter(reweighter_base, n_folds=2)
 # not need to divide data into train/test parts
 reweighter.fit(original, target, target_weight=target_sWeights)
 folding_weights = reweighter.predict_weights(original)
-draw_distributions_weighted(original, target, folding_weights,target_sWeights,
-                   'FoldingReweight.png')
+# cast the array into float
+cast_target_sWeights = target_sWeights.astype(float)
+draw_distributions_weighted(original, target, folding_weights,
+                            cast_target_sWeights,
+                            'FoldingReweight.png')
+#draw_distributions(original, target, folding_weights,
+#                   'FoldingReweight.png')
