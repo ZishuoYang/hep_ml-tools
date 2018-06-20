@@ -12,7 +12,6 @@ from sklearn.cross_validation import train_test_split
 from hep_ml.metrics_utils import ks_2samp_weighted
 
 from utils.plot import draw_distributions
-from utils.plot import print_statistics
 
 ###############
 # Import data #
@@ -99,4 +98,18 @@ cast_target_sWeights = target_sWeights.astype(float)
 
 draw_distributions('folding_weights.png',
                    columns, original, target, folding_weights, cast_target_sWeights,
+                   nrows=1, ncols=2, hist_settings=hist_settings)
+
+
+##################
+# Bin Reweighter #
+##################
+
+bins_reweighter = reweight.BinsReweighter(n_bins=50, n_neighs=1.)
+bins_reweighter.fit(original_train, target_train)
+bins_weights_test = bins_reweighter.predict_weights(original_test)
+
+# validate reweighting rule on the test part comparing 1d projections
+draw_distributions('bin_weight.png',
+                   columns, original_test, target_test, bins_weights_test,
                    nrows=1, ncols=2, hist_settings=hist_settings)
