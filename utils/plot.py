@@ -45,6 +45,7 @@ matplotlib.rcParams.update({'font.family': 'monospace'})
 
 def draw_distributions(filename, names, original, target,
                        original_weights=None, target_weights=None,
+                       nrows=2, ncols=3,
                        hist_settings={'bins': 20, 'density': True, 'alpha': 0.7}
                        ):
     # Assume weights to be equal if there are not provided
@@ -60,7 +61,7 @@ def draw_distributions(filename, names, original, target,
         plot_range = numpy.percentile(numpy.hstack([target[n]]), [0.01, 99.99])
 
         # subplot(nrows, ncols, idx)
-        subfigure = figure.add_subplot(2, 3, idx)
+        subfigure = figure.add_subplot(nrows, ncols, idx)
         subfigure.set_title(n)
 
         # Actually draw histograms to this subfigure
