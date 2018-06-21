@@ -125,7 +125,7 @@ bins_reweighter.fit(original_train, target_train)
 bins_weights_test = bins_reweighter.predict_weights(original_test)
 
 # validate reweighting rule on the test part comparing 1d projections
-draw_distributions('bin_weight.png',
+draw_distributions('bin_weight_test.png',
                    columns, original_test, target_test, bins_weights_test,
                    filename_as_title=True,
                    xlim=((0, 50), (0, 12)),
