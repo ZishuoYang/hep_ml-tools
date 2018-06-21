@@ -2,6 +2,7 @@
 
 import numpy
 import matplotlib
+matplotlib.use('agg')  # for png output
 
 from hep_ml.metrics_utils import ks_2samp_weighted
 from matplotlib import pyplot as plt
@@ -42,6 +43,10 @@ plt.style.use('bmh')
 # available families: ['serif', 'sans-serif', 'cursive', 'fantasy', 'monospace']
 matplotlib.rcParams.update({'font.family': 'monospace'})
 
+# Font size
+matplotlib.rcParams.update({'font.size': 10})
+matplotlib.rcParams.update({'figure.titlesize': 12})
+
 
 def draw_distributions(filename, names, original, target,
                        original_weights=None, target_weights=None,
@@ -70,6 +75,6 @@ def draw_distributions(filename, names, original, target,
                        range=plot_range, **hist_settings)
 
     # Minimize overlapping
-    figure.tight_layout()
+    figure.set_tight_layout(True)
 
-    figure.savefig(filename, dpi=300)
+    plt.savefig(filename, dpi=300)
