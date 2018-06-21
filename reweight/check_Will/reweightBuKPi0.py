@@ -115,6 +115,13 @@ draw_distributions('folding_weights.png',
                    ylim=((0, 0.07), (0, 1.7)),
                    nrows=1, ncols=2, hist_settings=hist_settings)
 
+# Need to provide a column name
+folding_weights.dtype = [('weight', numpy.float64)]
+
+# Write the new weights to a root tree
+root_numpy.array2root(folding_weights,
+                      'folding_weights.root', 'reweighting', mode='recreate')
+
 
 ##################
 # Bin Reweighter #
