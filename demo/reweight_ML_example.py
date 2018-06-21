@@ -63,25 +63,37 @@ draw_distributions('initial_test.png',
                    columns, original_test, target_test, original_weights_test)
 
 
-# # Gradient boosted Reweighter
-# reweighter = reweight.GBReweighter(n_estimators=50, learning_rate=0.1,
-                                   # max_depth=3, min_samples_leaf=1000,
-                                   # gb_args={'subsample': 0.4})
-# reweighter.fit(original_train, target_train)
-# gb_weights_test = reweighter.predict_weights(original_test)
+###############################
+# Gradient boosted Reweighter #
+###############################
 
-# # Validate reweighting rule on the test part comparing 1d projections
-# draw_distributions(original_test, target_test, gb_weights_test,
-                   # 'gb_weights_test.png')
+reweighter = reweight.GBReweighter(n_estimators=50, learning_rate=0.1,
+                                   max_depth=3, min_samples_leaf=1000,
+                                   gb_args={'subsample': 0.4})
+reweighter.fit(original_train, target_train)
+gb_weights_test = reweighter.predict_weights(original_test)
 
-# # Folding Reweighter
-# ## define base reweighter
-# reweighter_base = reweight.GBReweighter(n_estimators=50,
-                                        # learning_rate=0.1,max_depth=3,
-                                        # min_samples_leaf=1000,
-                                        # gb_args={'subsample':0.4})
-# reweighter = reweight.FoldingReweighter(reweighter_base, n_folds=2)
-# ## not need to divide data into train/test parts
-# reweighter.fit(original, target)
-# folding_weights = reweighter.predict_weights(original)
-# draw_distributions(original, target, folding_weights, 'FoldingReweight.png')
+# Validate reweighting rule on the test part comparing 1d projections
+draw_distributions('gb_weights_test.png',
+                   columns, original_test, target_test, gb_weights_test)
+print_statistics(columns, original_test, target_test, original_weights_test)
+
+
+######################
+# Folding Reweighter #
+######################
+
+# Define base reweighter
+reweighter_base = reweight.GBReweighter(n_estimators=50,
+                                        learning_rate=0.1, max_depth=3,
+                                        min_samples_leaf=1000,
+                                        gb_args={'subsample': 0.4})
+reweighter = reweight.FoldingReweighter(reweighter_base, n_folds=2)
+
+# Not need to divide data into train/test parts
+reweighter.fit(original, target)
+folding_weights = reweighter.predict_weights(original)
+
+draw_distributions('folding_weights.png',
+                   columns, original, target, folding_weights)
+print_statistics(columns, original, target, folding_weights)
