@@ -44,13 +44,15 @@ plt.style.use('bmh')
 matplotlib.rcParams.update({'font.family': 'monospace'})
 
 # Font size
-matplotlib.rcParams.update({'font.size': 10})
-matplotlib.rcParams.update({'figure.titlesize': 12})
+matplotlib.rcParams.update({'font.size': 8})
+matplotlib.rcParams.update({'figure.titlesize': 10})
 
 
 def draw_distributions(filename, names, original, target,
                        original_weights=None, target_weights=None,
+                       filename_as_title=False,
                        nrows=2, ncols=3,
+                       xlim=None, ylim=None,
                        hist_settings={'bins': 20, 'density': True, 'alpha': 0.7}
                        ):
     # Assume weights to be equal if there are not provided
@@ -68,6 +70,12 @@ def draw_distributions(filename, names, original, target,
         subfigure = figure.add_subplot(nrows, ncols, idx)
         subfigure.set_title(n)
 
+        # If provided, set axes limit for each subplot
+        if ylim is not None:
+            subfigure.set_ylim(ylim[idx-1])
+        if xlim is not None:
+            subfigure.set_xlim(xlim[idx-1])
+
         # Actually draw histograms to this subfigure
         subfigure.hist(original[n], weights=original_weights,
                        range=plot_range, **hist_settings)
@@ -75,6 +83,10 @@ def draw_distributions(filename, names, original, target,
                        range=plot_range, **hist_settings)
 
     # Minimize overlapping
-    figure.set_tight_layout(True)
+    if filename_as_title:
+        figure.suptitle('.'.join(filename.split('.')[:-1]), fontsize=14)
+        figure.tight_layout(rect=(0, 0, 1, 0.92))
+    else:
+        figure.tight_layout()
 
-    plt.savefig(filename, dpi=300)
+    figure.savefig(filename, dpi=300)
