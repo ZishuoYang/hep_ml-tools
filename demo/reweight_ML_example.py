@@ -11,7 +11,7 @@ from hep_ml import reweight
 from sklearn.cross_validation import train_test_split
 
 from utils.plot import draw_distributions
-from utils.plot import print_statistics
+from utils.stats import print_statistics
 
 ###############
 # Import data #
@@ -50,15 +50,18 @@ print('Length of original data: %s\nLength of target data: %s' % (
 # Print the unmodified original and test data set #
 ###################################################
 
-draw_distributions('initial.png', columns, original, target, original_weights)
+draw_distributions('initial.png',
+                   columns, original, target, original_weights)
+print_statistics(columns, original, target, original_weights)
 
-# # Train part of original distribution
-# draw_distributions(original_train, target_train, original_weights_train,
-                   # 'original_weights_train.png')
+# Train part of original distribution
+draw_distributions('initial_train.png',
+                   columns, original_train, target_train, original_weights_train)
 
-# # Test part of target distribution
-# draw_distributions(original_test, target_test, original_weights_test,
-                   # 'original_weights_test.png')
+# Test part of target distribution
+draw_distributions('initial_test.png',
+                   columns, original_test, target_test, original_weights_test)
+
 
 # # Gradient boosted Reweighter
 # reweighter = reweight.GBReweighter(n_estimators=50, learning_rate=0.1,
