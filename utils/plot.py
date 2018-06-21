@@ -27,7 +27,8 @@ def print_statistics(names, original, target,
                 weights1=original_weights,
                 weights2=target_weights
             ))
-        print('========')
+
+    print('========')
 
 
 ########
@@ -40,7 +41,6 @@ plt.style.use('bmh')
 # Font family
 # available families: ['serif', 'sans-serif', 'cursive', 'fantasy', 'monospace']
 matplotlib.rcParams.update({'font.family': 'monospace'})
-# matplotlib.rcParams.update({'font.serif': ['Dejavu Sans']})
 
 
 def draw_distributions(filename, names, original, target,
@@ -54,7 +54,6 @@ def draw_distributions(filename, names, original, target,
     target_weights = numpy.ones(len(target)) if \
         target_weights is None else target_weights
 
-    # Main figure
     figure = plt.figure()
 
     for idx, n in enumerate(names, 1):
