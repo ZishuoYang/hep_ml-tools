@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+import numpy
+
 from hep_ml.metrics_utils import ks_2samp_weighted
 
 
