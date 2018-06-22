@@ -11,6 +11,7 @@ from hep_ml import reweight
 from sklearn.cross_validation import train_test_split
 
 from utils.plot import draw_distributions
+from utils.io import array2root
 
 ###############
 # Import data #
@@ -119,8 +120,8 @@ draw_distributions('folding_weights.png',
 folding_weights.dtype = [('weight', numpy.float64)]
 
 # Write the new weights to a root tree
-root_numpy.array2root(folding_weights,
-                      'folding_weights.root', 'reweighting', mode='recreate')
+array2root(folding_weights,
+           'folding_weights.root', 'reweighting', mode='recreate')
 
 
 ##################
