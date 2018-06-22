@@ -22,13 +22,15 @@ original = root_numpy.root2array('MC_K+Pi-.root', branches=columns)
 original = pandas.DataFrame(original)
 target = root_numpy.root2array('RD_K+Pi-_withSW.root', branches=columns)
 target = pandas.DataFrame(target)
-toReweight = root_numpy.root2array('DVntuple_MC16_forGBR.root',
-                                   branches=['Bu_CONE3MULT','Bu_VTXISONUMVTX'])
-toReweight = pandas.DataFrame(toReweight)
 
 original_weights = numpy.ones(len(original))
 target_sWeights = root_numpy.root2array('RD_K+Pi-_withSW.root',
                                         branches=['Nsig_sw'])
+
+# We'll be applying our reweight to this dataset
+toReweight = root_numpy.root2array('DVntuple_MC16_forGBR.root',
+                                   branches=['Bu_CONE3MULT', 'Bu_VTXISONUMVTX'])
+toReweight = pandas.DataFrame(toReweight)
 
 
 ##################################
@@ -45,32 +47,6 @@ original_weights_test = numpy.ones(len(original_test))
 
 # Plot settings
 hist_settings = {'bins': 50, 'density': True, 'alpha': 0.5}
-
-
-################
-# Plot initial #
-################
-
-draw_distributions('initial.png',
-                   columns, original, target, original_weights,
-                   filename_as_title=True,
-                   xlim=((0, 50), (0, 12)),
-                   ylim=((0, 0.07), (0, 1.7)),
-                   nrows=1, ncols=2, hist_settings=hist_settings)
-
-draw_distributions('initial_train.png',
-                   columns, original_train, target_train, original_weights_train,
-                   filename_as_title=True,
-                   xlim=((0, 50), (0, 12)),
-                   ylim=((0, 0.07), (0, 1.7)),
-                   nrows=1, ncols=2, hist_settings=hist_settings)
-
-draw_distributions('initial_test.png',
-                   columns, original_test, target_test, original_weights_test,
-                   filename_as_title=True,
-                   xlim=((0, 50), (0, 12)),
-                   ylim=((0, 0.07), (0, 1.7)),
-                   nrows=1, ncols=2, hist_settings=hist_settings)
 
 
 ###############################
@@ -113,13 +89,6 @@ folding_weights = reweighter.predict_weights(toReweight)
 # Cast the sWeight array into float
 cast_target_sWeights = target_sWeights.astype(float)
 
-draw_distributions('folding_weights.png',
-                   columns, original, target, folding_weights, cast_target_sWeights,
-                   filename_as_title=True,
-                   xlim=((0, 50), (0, 12)),
-                   ylim=((0, 0.07), (0, 1.7)),
-                   nrows=1, ncols=2, hist_settings=hist_settings)
-
 draw_distributions('GBReweight_before_after.png',
                    columns, toReweight, toReweight, folding_weights,
                    filename_as_title=True,
@@ -131,30 +100,5 @@ draw_distributions('GBReweight_before_after.png',
 folding_weights.dtype = [('weight', numpy.float64)]
 
 # Write the new weights to the same root tree
-root_numpy.array2root(folding_weights,
-                      'DVntuple_MC16_forGBR.root', 'DecayTree', mode='update')
-
-
-##################
-# Bin Reweighter #
-##################
-
-bins_reweighter = reweight.BinsReweighter(n_bins=50, n_neighs=1.)
-bins_reweighter.fit(original_train, target_train)
-bins_weights_test = bins_reweighter.predict_weights(original_test)
-bins_weights_train = bins_reweighter.predict_weights(original_train)
-
-# validate reweighting rule on the test part comparing 1d projections
-draw_distributions('bin_weight_test.png',
-                   columns, original_test, target_test, bins_weights_test,
-                   filename_as_title=True,
-                   xlim=((0, 50), (0, 12)),
-                   ylim=((0, 0.07), (0, 1.7)),
-                   nrows=1, ncols=2, hist_settings=hist_settings)
-
-draw_distributions('bin_weight_train.png',
-                   columns, original_train, target_train, bins_weights_train,
-                   filename_as_title=True,
-                   xlim=((0, 50), (0, 12)),
-                   ylim=((0, 0.07), (0, 1.7)),
-                   nrows=1, ncols=2, hist_settings=hist_settings)
+array2root(folding_weights,
+           'DVntuple_MC16_forGBR.root', 'DecayTree', mode='recreate')
