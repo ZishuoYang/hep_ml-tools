@@ -4,8 +4,8 @@ void copytree(){
     TFile *oldFile = new TFile("folding_weights.root");
     TTree *oldTree = (TTree*)oldFile->Get("reweighting");
 
-    // Create new file with compress=1 for ZLIB
-    TFile *newFile = new TFile("new.root", "recreate", "", 1);
+    // Create new file with compress=101 for ZLIB: 100*algorithm + level
+    TFile *newFile = new TFile("new.root", "recreate", "", 101);
     TTree *newTree = oldTree->CloneTree();
 
     // Save new file and exit
