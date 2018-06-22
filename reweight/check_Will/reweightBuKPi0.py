@@ -22,7 +22,8 @@ original = root_numpy.root2array('MC_K+Pi-.root', branches=columns)
 original = pandas.DataFrame(original)
 target = root_numpy.root2array('RD_K+Pi-_withSW.root', branches=columns)
 target = pandas.DataFrame(target)
-toReweight = root_numpy.root2array('DVntuple_MC16_forGBR.root', branches=columns)
+toReweight = root_numpy.root2array('DVntuple_MC16_forGBR.root',
+                                   branches=['Bu_CONE3MULT','Bu_VTXISONUMVTX'])
 toReweight = pandas.DataFrame(toReweight)
 
 original_weights = numpy.ones(len(original))
