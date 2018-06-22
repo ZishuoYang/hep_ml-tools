@@ -22,6 +22,8 @@ original = root_numpy.root2array('MC_K+Pi-.root', branches=columns)
 original = pandas.DataFrame(original)
 target = root_numpy.root2array('RD_K+Pi-_withSW.root', branches=columns)
 target = pandas.DataFrame(target)
+toReweight = root_numpy.root2array('DVntuple_MC16_forGBR.root', branches=columns)
+toReweight = pandas.DataFrame(toReweight)
 
 original_weights = numpy.ones(len(original))
 target_sWeights = root_numpy.root2array('RD_K+Pi-_withSW.root',
@@ -41,7 +43,7 @@ original_weights_train = numpy.ones(len(original_train))
 original_weights_test = numpy.ones(len(original_test))
 
 # Plot settings
-hist_settings = {'bins': 50, 'density': True, 'alpha': 0.7}
+hist_settings = {'bins': 50, 'density': True, 'alpha': 0.5}
 
 
 ################
@@ -103,9 +105,11 @@ reweighter = reweight.FoldingReweighter(reweighter_base, n_folds=2)
 
 # Not need to divide data into train/test parts
 reweighter.fit(original, target, target_weight=target_sWeights)
-folding_weights = reweighter.predict_weights(original)
 
-# Cast the array into float
+# Prediect weights for the input file
+folding_weights = reweighter.predict_weights(toReweight)
+
+# Cast the sWeight array into float
 cast_target_sWeights = target_sWeights.astype(float)
 
 draw_distributions('folding_weights.png',
@@ -115,12 +119,19 @@ draw_distributions('folding_weights.png',
                    ylim=((0, 0.07), (0, 1.7)),
                    nrows=1, ncols=2, hist_settings=hist_settings)
 
+draw_distributions('GBReweight_before_after.png',
+                   columns, toReweight, toReweight, folding_weights,
+                   filename_as_title=True,
+                   xlim=((0, 50), (0, 12)),
+                   ylim=((0, 0.07), (0, 1.7)),
+                   nrows=1, ncols=2, hist_settings=hist_settings)
+
 # Need to provide a column name
 folding_weights.dtype = [('weight', numpy.float64)]
 
-# Write the new weights to a root tree
+# Write the new weights to the same root tree
 root_numpy.array2root(folding_weights,
-                      'folding_weights.root', 'reweighting', mode='recreate')
+					  'DVntuple_MC16_forGBR.root', 'DecayTree', mode='update')
 
 
 ##################
