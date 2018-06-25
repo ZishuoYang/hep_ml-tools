@@ -16,10 +16,12 @@ def array2root(array, filename,
     if not target_file.is_file():
         mode = 'recreate'
 
+    # Since we explicitly specify the compression algorithm, it is always
+    # backward compatible.
     if compression == 'zlib':
         rfile = ROOT.TFile.Open(filename, mode, "", 101)
     else:
-        rfile = ROOT.TFile.Open(filename, mode)
+        rfile = ROOT.TFile.Open(filename, mode, "", 201)
 
     if mode == 'update':
         tree = rfile.Get(treename)
