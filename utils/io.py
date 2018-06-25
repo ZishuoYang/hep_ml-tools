@@ -27,8 +27,8 @@ def array2root(array, filename,
     else:
         datatree = array2tree(array, name=treename)
 
-    # file.Write("", ROOT.TObject.kOverwrite)
-    datatree.Write(treename, ROOT.TObject.kOverwrite)
+    # datatree.Write(treename, ROOT.TObject.kOverwrite)
+    rfile.Write("", ROOT.TObject.kOverwrite)
     del datatree
 
     rfile.Close()
