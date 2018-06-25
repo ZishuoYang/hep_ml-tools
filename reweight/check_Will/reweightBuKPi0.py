@@ -11,6 +11,8 @@ from hep_ml import reweight
 from sklearn.cross_validation import train_test_split
 
 from utils.plot import draw_distributions
+# from utils.io import array2root
+from root_numpy import array2root
 
 ###############
 # Import data #
@@ -28,8 +30,11 @@ target_sWeights = root_numpy.root2array('RD_K+Pi-_withSW.root',
                                         branches=['Nsig_sw'])
 
 # We'll be applying our reweight to this dataset
-toReweight = root_numpy.root2array('DVntuple_MC16_forGBR.root',
-                                   branches=['Bu_CONE3MULT', 'Bu_VTXISONUMVTX'])
+columns_toReweight = ['Bu_CONE3MULT', 'Bu_VTXISONUMVTX']
+toReweight = root_numpy.root2array('DVntuple_MC16_trigger.root',
+                                   branches=columns_toReweight)
+toReweight.dtype = [('Bu_LOKI_CONE2MULT', numpy.float64),
+                    ('Bu_LOKI_modNumVertsOneTrack', numpy.float64)]
 toReweight = pandas.DataFrame(toReweight)
 
 
@@ -46,7 +51,7 @@ original_weights_train = numpy.ones(len(original_train))
 original_weights_test = numpy.ones(len(original_test))
 
 # Plot settings
-hist_settings = {'bins': 50, 'density': True, 'alpha': 0.5}
+hist_settings = {'bins': 100, 'density': True, 'alpha': 0.65}
 
 
 ###############################
@@ -64,7 +69,7 @@ draw_distributions('gb_weights_test.png',
                    columns, original_test, target_test, gb_weights_test,
                    filename_as_title=True,
                    xlim=((0, 50), (0, 12)),
-                   ylim=((0, 0.07), (0, 1.7)),
+                   ylim=((0, 0.10), (0, 3.0)),
                    nrows=1, ncols=2, hist_settings=hist_settings)
 
 
@@ -74,7 +79,7 @@ draw_distributions('gb_weights_test.png',
 
 # Define base reweighter
 reweighter_base = reweight.GBReweighter(n_estimators=50,
-                                        learning_rate=0.1, max_depth=2,
+                                        learning_rate=0.1, max_depth=3,
                                         min_samples_leaf=1000,
                                         gb_args={'subsample': 0.4})
 
@@ -93,12 +98,12 @@ draw_distributions('GBReweight_before_after.png',
                    columns, toReweight, toReweight, folding_weights,
                    filename_as_title=True,
                    xlim=((0, 50), (0, 12)),
-                   ylim=((0, 0.07), (0, 1.7)),
+                   ylim=((0, 0.10), (0, 3.0)),
                    nrows=1, ncols=2, hist_settings=hist_settings)
 
 # Need to provide a column name
-folding_weights.dtype = [('weight', numpy.float64)]
+folding_weights.dtype = [('weight_ml', numpy.float64)]
 
 # Write the new weights to the same root tree
 array2root(folding_weights,
-           'DVntuple_MC16_forGBR.root', 'DecayTree', mode='recreate')
+           'DVntuple_MC16_trigger.root', 'DecayTree', mode='update')
