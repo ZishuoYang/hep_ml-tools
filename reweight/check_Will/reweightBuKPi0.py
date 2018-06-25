@@ -9,10 +9,12 @@ import numpy
 
 from hep_ml import reweight
 from sklearn.cross_validation import train_test_split
+from pathlib import Path
+from shutil import copyfile
 
 from utils.plot import draw_distributions
-# from utils.io import array2root
-from root_numpy import array2root
+from utils.io import array2root
+# from root_numpy import array2root
 
 ###############
 # Import data #
@@ -31,7 +33,7 @@ target_sWeights = root_numpy.root2array('RD_K+Pi-_withSW.root',
 
 # We'll be applying our reweight to this dataset
 columns_toReweight = ['Bu_CONE3MULT', 'Bu_VTXISONUMVTX']
-toReweight = root_numpy.root2array('DVntuple_MC16_trigger.root',
+toReweight = root_numpy.root2array('DVntuple_MC16_backup.root',
                                    branches=columns_toReweight)
 toReweight.dtype = [('Bu_LOKI_CONE2MULT', numpy.float64),
                     ('Bu_LOKI_modNumVertsOneTrack', numpy.float64)]
@@ -104,6 +106,10 @@ draw_distributions('GBReweight_before_after.png',
 # Need to provide a column name
 folding_weights.dtype = [('weight_ml', numpy.float64)]
 
+# Create a copy for consistency
+copyfile(Path('DVntuple_MC16_backup.root'),
+         Path('DVntuple_MC16_reweight.root'))
+
 # Write the new weights to the same root tree
 array2root(folding_weights,
-           'DVntuple_MC16_trigger.root', 'DecayTree', mode='update')
+           'DVntuple_MC16_reweight.root', 'DecayTree', mode='update')
