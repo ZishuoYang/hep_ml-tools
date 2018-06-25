@@ -20,3 +20,7 @@ test_array_read = root2array('test_tree.root', 'test_tree',
                              branches=['a', 'b', 'c'])
 print('Test if two arrays equal: %s' %
       numpy.array_equal(test_array, test_array_read))
+
+# Now try to update the existing root file
+test_array_new = numpy.array([(3,), (9,)], dtype=[('d', int)])
+array2root(test_array_new, 'test_tree.root', 'test_tree')
