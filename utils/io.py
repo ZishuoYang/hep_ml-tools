@@ -6,8 +6,8 @@ from pathlib import Path
 
 
 def array2root(array, filename,
-               treename='tree',
-               mode='update', compression='zlib'):
+               treename='tree', mode='update',
+               compression='zlib'):
     # Stolen from 'root_numpy', in:
     #   root_numpy/src/tree.pyx
 
@@ -17,9 +17,9 @@ def array2root(array, filename,
         mode = 'recreate'
 
     if compression == 'zlib':
-        rfile = ROOT.TFile(filename, mode, "", 101)
+        rfile = ROOT.TFile.Open(filename, mode, "", 101)
     else:
-        rfile = ROOT.TFile(filename, mode)
+        rfile = ROOT.TFile.Open(filename, mode)
 
     if mode == 'update':
         tree = rfile.Get(treename)
@@ -27,9 +27,12 @@ def array2root(array, filename,
     else:
         datatree = array2tree(array, name=treename)
 
-    # datatree.Write(treename, ROOT.TObject.kOverwrite)
+    # Possible alternative write modes:
+    #   ROOT.TObject.kWriteDelete, ROOT.TObject.kOverwrite
     rfile.Write("", ROOT.TObject.kOverwrite)
-    del datatree
+    # rfile.Write()
 
     rfile.Close()
+
+    del datatree
     del rfile
