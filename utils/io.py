@@ -8,10 +8,10 @@ from pathlib import Path
 def array2root(array, filename,
                treename='tree', mode='update',
                compression='zlib'):
-    # Stolen from 'root_numpy', in:
+    # Main idea stolen from 'root_numpy', in:
     #   root_numpy/src/tree.pyx
 
-    # First, if the file is yet to exist, forcing 'recreate mode'
+    # Ff the file is yet to exist, forcing 'recreate' mode.
     target_file = Path(filename)
     if not target_file.is_file():
         mode = 'recreate'
