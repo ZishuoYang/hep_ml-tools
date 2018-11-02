@@ -49,9 +49,9 @@ def draw_distributions(filename, names, original, target,
 
         # If provided, set axes scale
         if xscale is not None:
-            subfigure.xscale(xscale[idx-1])
+            subfigure.set_xscale(xscale[idx-1])
         if yscale is not None:
-            subfigure.yscale(yscale[idx-1])
+            subfigure.set_yscale(yscale[idx-1])
 
         # Actually draw histograms to this subfigure
         subfigure.hist(original[n], weights=original_weights,
