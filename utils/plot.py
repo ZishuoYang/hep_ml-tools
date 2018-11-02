@@ -23,6 +23,7 @@ def draw_distributions(filename, names, original, target,
                        filename_as_title=False,
                        nrows=2, ncols=3,
                        xlim=None, ylim=None,
+                       xscale=None, yscale=None,
                        hist_settings={'bins': 20, 'density': True, 'alpha': 0.7}
                        ):
     # Assume weights to be equal if there are not provided
@@ -45,6 +46,12 @@ def draw_distributions(filename, names, original, target,
             subfigure.set_ylim(ylim[idx-1])
         if xlim is not None:
             subfigure.set_xlim(xlim[idx-1])
+
+        # If provided, set axes scale
+        if xscale is not None:
+            subfigure.xscale(xscale[idx-1])
+        if yscale is not None:
+            subfigure.yscale(yscale[idx-1])
 
         # Actually draw histograms to this subfigure
         subfigure.hist(original[n], weights=original_weights,
